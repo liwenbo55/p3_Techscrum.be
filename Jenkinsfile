@@ -57,8 +57,10 @@ pipeline {
                           //    '''
                           // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
                           sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-uat --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
+                          def new_image = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest"
                           sh """
-                                jq --arg new_image "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest" \
+                                  
+                                jq --arg new_image $new_image \
                                     'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = $new_image' \
                                     task_definition.json > new_task_definition.json
                              """
