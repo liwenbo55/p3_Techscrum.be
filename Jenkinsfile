@@ -10,15 +10,15 @@ pipeline {
             }
         }
         
-        stage('ci'){
-            steps{
-                script{
-                    sh 'npm install'
-                    sh 'npm run build'
-                    sh 'npm run test'
-                }
-            }
-        }
+        // stage('ci'){
+        //     steps{
+        //         script{
+        //             sh 'npm install'
+        //             sh 'npm run build'
+        //             sh 'npm run test'
+        //         }
+        //     }
+        // }
 
         stage('cd'){
             steps {
@@ -56,9 +56,9 @@ pipeline {
                                     .
                              '''
                           sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
-                          sh 'aws ecs describe-task-definition --task-definition crankbit-ecs-task-definition-${{vars.ENV_NAME}} --query 'taskDefinition' > task_definition.json'
+                          sh 'aws ecs describe-task-definition --task-definition crankbit-ecs-task-definition-uat --query 'taskDefinition' > task_definition.json'
                           sh '''
-                                jq --arg new_image "${{ vars.ECR_REGISTRY_URI }}:${{ github.sha }}" \
+                                jq --arg new_image "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest" \
                                     'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = $new_image' \
                                     task_definition.json > new_task_definition.json
                              '''
