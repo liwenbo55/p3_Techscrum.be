@@ -6,7 +6,7 @@ pipeline {
         stage('Git checkout') {
             steps{
                 // Get source code from a GitHub repository
-                git branch:'main', url:'https://github.com/liwenbo55/p3_Techscrum.be.git'
+                git branch:'main', url:'https://github.com/liwenbo55/p3_Techscrum.fe.git'
             }
         }
         
@@ -20,7 +20,7 @@ pipeline {
 
         stage('cd'){
             steps {
-                  withAWS(region:'ap-southeast-2',credentials:'lawrence-jenkins-credential') {
+                withAWS(region:'ap-southeast-2',credentials:'lawrence-jenkins-credential') {
                     withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding', 
                         credentialsId: 'lawrence-jenkins-credential', 
@@ -55,12 +55,13 @@ pipeline {
                         """
                     //   sh 'docker tag techscrum-backend-ecr-uat:latest 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
                     //   sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
-                  }
+                    }
                 }
 
             // steps{
                 
             // }
+            }
         }
 
 
