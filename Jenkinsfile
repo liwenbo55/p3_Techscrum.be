@@ -31,7 +31,7 @@ pipeline {
                         string(credentialsId: 'PUBLIC_CONNECTION', variable: 'PUBLIC_CONNECTION'), 
                         string(credentialsId: 'TENANTS_CONNECTION', variable: 'TENANTS_CONNECTION')]) {
                           sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
-                          sh """
+                          sh '''
                                 docker build \
                                     --build-arg ENVIRONMENT="production" \
                                     --build-arg NAME="techscrumapp" \
@@ -54,8 +54,22 @@ pipeline {
                                     --build-arg DEVOPS_MODE="false" \
                                     -t 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest \
                                     .
-                            """
+                             '''
                           sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
+                          sh 'aws ecs describe-task-definition --task-definition crankbit-ecs-task-definition-${{vars.ENV_NAME}} --query 'taskDefinition' > task_definition.json'
+                          sh '''
+                                jq --arg new_image "${{ vars.ECR_REGISTRY_URI }}:${{ github.sha }}" \
+                                    'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = $new_image' \
+                                    task_definition.json > new_task_definition.json
+                             '''
+                          sh 'aws ecs register-task-definition --cli-input-json file://new_task_definition.json'
+                          sh '''
+                             aws ecs update-service \
+                                    --cluster techscrum-ecs-cluster-uat \
+                                    --service techscrum-ecs-service-uat \
+                                    --task-definition techscrum-ecs-task-definition-uat \
+                                    --force-new-deployment
+                             '''
                         }                    
                 }
             }
