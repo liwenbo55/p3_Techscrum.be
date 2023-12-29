@@ -59,25 +59,21 @@ pipeline {
                           sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-uat --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
                           // generate a new task definition
                           def new_pushed_image = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest"
-                          // sh """
-                          //       jq --arg new_image $new_image \
-                          //           'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = $new_image' \
-                          //           task_definition.json > new_task_definition.json
-                          //    """
                             sh """
                                 jq --arg new_image "${new_pushed_image}" \
                                    'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = \$new_image' \
                                    task_definition.json > new_task_definition.json
-                            """
-
-                          sh 'aws ecs register-task-definition --cli-input-json file://new_task_definition.json'
-                          sh '''
+                               """
+                        // register new task definition
+                          sh 'aws ecs register-task-definition --cli-input-json file://new_task_definition.json --region ap-southeast-2'
+                        // update ECS service
+                          sh """
                              aws ecs update-service \
                                     --cluster techscrum-ecs-cluster-uat \
                                     --service techscrum-ecs-service-uat \
                                     --task-definition techscrum-ecs-task-definition-uat \
                                     --force-new-deployment
-                             '''
+                             """
                         }                    
                 }
             }
