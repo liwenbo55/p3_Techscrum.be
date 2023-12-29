@@ -10,13 +10,15 @@ pipeline {
             }
         }
         
-        // stage('ci'){
-        //     steps{
-        //         sh 'npm install'
-        //         sh 'npm run build'
-        //         sh 'npm run test'
-        //     }
-        // }
+        stage('ci'){
+            steps{
+                script{
+                    sh 'npm install'
+                    sh 'npm run build'
+                    sh 'npm run test'
+                }
+            }
+        }
 
         stage('cd'){
             steps {
