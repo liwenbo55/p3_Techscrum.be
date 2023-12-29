@@ -20,8 +20,7 @@ pipeline {
 
         stage('cd'){
             steps {
-                // withAWS(region:'ap-southeast-2',credentials:'lawrence-jenkins-credential') {
-                    withCredentials([
+                withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding', 
                         credentialsId: 'lawrence-jenkins-credential', 
                         accessKeyVariable: 'AWS_ACCESS_KEY_ID', 
@@ -53,11 +52,9 @@ pipeline {
                                 -t 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest \
                                 .
                         """
-                    //   sh 'docker tag techscrum-backend-ecr-uat:latest 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
-                    //   sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
+                      sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
                     }
-                // }
-
+                
             // steps{
                 
             // }
