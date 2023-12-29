@@ -72,6 +72,7 @@ pipeline {
                                     --cluster techscrum-ecs-cluster-uat \
                                     --service techscrum-ecs-service-uat \
                                     --task-definition techscrum-ecs-task-definition-uat \
+                                    --region ap-southeast-2 \
                                     --force-new-deployment
                              """
                         }                    
