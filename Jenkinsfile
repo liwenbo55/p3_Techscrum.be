@@ -2,6 +2,10 @@
 pipeline {
     agent any
 
+    environment {
+        BACKEND_HEALTHCHECK_URL = 'backend.uat.wenboli.xyz'
+    }
+
     stages {
         stage('Git checkout') {
             steps{
@@ -30,9 +34,12 @@ pipeline {
                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'], 
                         string(credentialsId: 'PUBLIC_CONNECTION', variable: 'PUBLIC_CONNECTION'), 
                         string(credentialsId: 'TENANTS_CONNECTION', variable: 'TENANTS_CONNECTION')]) {
-                          sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
-                          sh '''
-                                docker build \
+                        // Login to AWS ECR
+                        sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
+                        
+                        // Build docker image
+                        sh '''
+                            docker build \
                                     --build-arg ENVIRONMENT="uat" \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
@@ -55,18 +62,26 @@ pipeline {
                                     -t 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest \
                                     .
                              '''
-                          // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
-                          sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-uat --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
-                          // generate a new task definition
-                          def new_pushed_image = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest"
-                            sh """
-                                jq --arg new_image "${new_pushed_image}" \
-                                   'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = \$new_image' \
-                                   task_definition.json > new_task_definition.json
-                               """
-                        // register new task definition
+
+                        // Push docker image to AWS ECR
+                        // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
+                        
+                        // Update ECS service:
+                        // Fetch task-definition
+                        sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-uat --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
+                        
+                        // Generate a new task definition
+                        def new_pushed_image = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest"
+                        sh """
+                            jq --arg new_image "${new_pushed_image}" \
+                               'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = \$new_image' \
+                               task_definition.json > new_task_definition.json
+                           """
+                        
+                        // Register new task definition
                           sh 'aws ecs register-task-definition --cli-input-json file://new_task_definition.json --region ap-southeast-2'
-                        // update ECS service
+                        
+                        // Update ECS service
                           sh """
                              aws ecs update-service \
                                     --cluster techscrum-ecs-cluster-uat \
@@ -75,12 +90,13 @@ pipeline {
                                     --region ap-southeast-2 \
                                     --force-new-deployment
                              """
+
+                        // Echo backend url
+                          sh "echo 'Backend healthcheck url:${BACKEND_HEALTHCHECK_URL}'"
                         }                    
                 }
             }
         }
-
-
     }
         
     // post {
