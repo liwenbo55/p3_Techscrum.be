@@ -34,6 +34,8 @@ pipeline {
                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'], 
                         string(credentialsId: 'PUBLIC_CONNECTION', variable: 'PUBLIC_CONNECTION'), 
                         string(credentialsId: 'TENANTS_CONNECTION', variable: 'TENANTS_CONNECTION')]) {
+                        // Remove unused build cache
+                        sh 'docker builder prune -f'
                         // Login to AWS ECR
                         sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
                         
