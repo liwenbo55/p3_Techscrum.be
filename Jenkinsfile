@@ -61,7 +61,8 @@ pipeline {
                         sh "echo 'main domain: ${env.MAIN_DOMAIN}'" 
                         // Build docker image
                         // docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} .")
-                        docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg NAME='techscrumapp' .")
+                        docker.build("${ECR_REGISTRY}:latest", """--build-arg ENVIRONMENT=${ENVIRONMENT} \
+                                                                     --build-arg NAME='techscrumapp' .""")
                                      
                         // "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg NAME="techscrumapp" 
                         //              --build-arg PORT="8000" --build-arg API_PREFIX="/api"  --build-arg AWS_REGION=${AWS_REGION} 
