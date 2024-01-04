@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        BACKEND_HEALTHCHECK_URL = 'backend.uat.wenboli.xyz'
+        BACKEND_HEALTHCHECK_URL = 'backend.uat.wenboli.xyz/api/v2/healthcheck'
     }
 
     stages {
