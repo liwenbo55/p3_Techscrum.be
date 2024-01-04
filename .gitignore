@@ -33,3 +33,5 @@ yarn-error.log*
 /test/__tests__/storage/logs
 
 Dockerfile copy
+task_definition.json
+new_task_definition.json
