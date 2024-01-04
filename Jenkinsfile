@@ -86,38 +86,15 @@ pipeline {
                         //                                           .""")
                                      
 
-                        // sh '''
-                        //     docker build \
-                        //             --build-arg ENVIRONMENT=${PROJECT_ENV} \
-                        //             --build-arg NAME="techscrumapp" \
-                        //             --build-arg PORT="8000" \
-                        //             --build-arg API_PREFIX="/api" \
-                        //             --build-arg AWS_REGION="${AWS_REGION}" \
-                        //             --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
-                        //             --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
-                        //             --build-arg ACCESS_SECRET="random" \
-                        //             --build-arg EMAIL_SECRET="random" \
-                        //             --build-arg FORGET_SECRET="random" \
-                        //             --build-arg LIMITER="true" \
-                        //             --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
-                        //             --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
-                        //             --build-arg CONNECT_TENANT="" \
-                        //             --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
-                        //             --build-arg STRIPE_PRIVATE_KEY="123" \
-                        //             --build-arg STRIPE_WEBHOOK_SECRET="123" \
-                        //             --build-arg LOGGLY_ENDPOINT="" \
-                        //             --build-arg DEVOPS_MODE="false" \
-                        //             -t ${ECR_REGISTRY}:latest \
-                        //             .
-                        //      '''
                         sh '''
-                            docker build --build-arg ENVIRONMENT=uat \
+                            docker build \
+                                    --build-arg ENVIRONMENT="production" \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg API_PREFIX="/api" \
-                                    --build-arg AWS_REGION="ap-southeast-2" \
-                                    --build-arg AWS_ACCESS_KEY_ID="${AWS_REGION}" \
-                                    --build-arg AWS_SECRET_ACCESS_KEY="${AWS_ACCESS_KEY_ID}" \
+                                    --build-arg AWS_REGION="${AWS_REGION}" \
+                                    --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+                                    --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
                                     --build-arg ACCESS_SECRET="random" \
                                     --build-arg EMAIL_SECRET="random" \
                                     --build-arg FORGET_SECRET="random" \
@@ -125,14 +102,37 @@ pipeline {
                                     --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
                                     --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
                                     --build-arg CONNECT_TENANT="" \
-                                    --build-arg MAIN_DOMAIN="uat.techscrumjr11.com" \
+                                    --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
                                     --build-arg STRIPE_PRIVATE_KEY="123" \
-                                    --build-arg STRIPE_WEBHOOK_SECRET="1234" \
+                                    --build-arg STRIPE_WEBHOOK_SECRET="123" \
                                     --build-arg LOGGLY_ENDPOINT="" \
                                     --build-arg DEVOPS_MODE="false" \
-                                    -t techscrum-backend-ecr-uat:latest \
+                                    -t ${ECR_REGISTRY}:latest \
                                     .
-                           '''
+                             '''
+                        // sh '''
+                        //     docker build --build-arg ENVIRONMENT=uat \
+                        //             --build-arg NAME="techscrumapp" \
+                        //             --build-arg PORT="8000" \
+                        //             --build-arg API_PREFIX="/api" \
+                        //             --build-arg AWS_REGION="ap-southeast-2" \
+                        //             --build-arg AWS_ACCESS_KEY_ID="${AWS_REGION}" \
+                        //             --build-arg AWS_SECRET_ACCESS_KEY="${AWS_ACCESS_KEY_ID}" \
+                        //             --build-arg ACCESS_SECRET="random" \
+                        //             --build-arg EMAIL_SECRET="random" \
+                        //             --build-arg FORGET_SECRET="random" \
+                        //             --build-arg LIMITER="true" \
+                        //             --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
+                        //             --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
+                        //             --build-arg CONNECT_TENANT="" \
+                        //             --build-arg MAIN_DOMAIN="uat.techscrumjr11.com" \
+                        //             --build-arg STRIPE_PRIVATE_KEY="123" \
+                        //             --build-arg STRIPE_WEBHOOK_SECRET="1234" \
+                        //             --build-arg LOGGLY_ENDPOINT="" \
+                        //             --build-arg DEVOPS_MODE="false" \
+                        //             -t techscrum-backend-ecr-uat:latest \
+                        //             .
+                        //    '''
                         
                         sh "echo 'main domain: ${MAIN_DOMAIN}'" 
 
