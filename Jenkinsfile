@@ -2,8 +2,18 @@
 pipeline {
     agent any
 
+    parameters {
+        // Choose an environment to deploy back-end.
+        choice(choices: ['dev', 'uat', 'prod'], name: 'Environment', description: 'Please choose an environment to deploy back-end.')
+    }
+
     environment {
-        BACKEND_HEALTHCHECK_URL = 'backend.uat.wenboli.xyz/api/v2/healthcheck'
+        AWS_REGION  = "ap-southeast-2"
+        HOSTED_ZONE = "wenboli.xyz"
+        ENVIRONMENT = "${params.Environment}"
+        MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
+        BACKEND_HEALTHCHECK_URL = "backend.${params.Environment}.${HOSTED_ZONE}/api/v2/healthcheck"
+        ECR_REGISTRY = 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}
     }
 
     stages {
@@ -34,6 +44,7 @@ pipeline {
                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'], 
                         string(credentialsId: 'PUBLIC_CONNECTION', variable: 'PUBLIC_CONNECTION'), 
                         string(credentialsId: 'TENANTS_CONNECTION', variable: 'TENANTS_CONNECTION')]) {
+                        
                         // Remove unused build cache
                         sh 'docker builder prune -f'
                         // Login to AWS ECR
@@ -42,11 +53,11 @@ pipeline {
                         // Build docker image
                         sh '''
                             docker build \
-                                    --build-arg ENVIRONMENT="uat" \
+                                    --build-arg ENVIRONMENT="${UAT_DISTRIBUTION_ID}" \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg API_PREFIX="/api" \
-                                    --build-arg AWS_REGION="ap-southeast-2" \
+                                    --build-arg AWS_REGION="${AWS_REGION}" \
                                     --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
                                     --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
                                     --build-arg ACCESS_SECRET="random" \
@@ -56,24 +67,25 @@ pipeline {
                                     --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
                                     --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
                                     --build-arg CONNECT_TENANT="" \
-                                    --build-arg MAIN_DOMAIN="uat.wenboli.xyz" \
+                                    --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
                                     --build-arg STRIPE_PRIVATE_KEY="123" \
                                     --build-arg STRIPE_WEBHOOK_SECRET="123" \
                                     --build-arg LOGGLY_ENDPOINT="" \
                                     --build-arg DEVOPS_MODE="false" \
-                                    -t 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest \
+                                    -t ${ECR_REGISTRY}:latest \
                                     .
                              '''
 
                         // Push docker image to AWS ECR
                         // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
+                        sh 'docker push ${ECR_REGISTRY}:latest'
                         
                         // Update ECS service:
                         // Fetch task-definition
                         sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-uat --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
                         
                         // Generate a new task definition
-                        def new_pushed_image = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest"
+                        def new_pushed_image = "${ECR_REGISTRY}:latest"
                         sh """
                             jq --arg new_image "${new_pushed_image}" \
                                'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = \$new_image' \
@@ -81,43 +93,41 @@ pipeline {
                            """
                         
                         // Register new task definition
-                          sh 'aws ecs register-task-definition --cli-input-json file://new_task_definition.json --region ap-southeast-2'
+                          sh "aws ecs register-task-definition --cli-input-json file://new_task_definition.json --region ${AWS_REGION}"
                         
                         // Update ECS service
                           sh """
                              aws ecs update-service \
-                                    --cluster techscrum-ecs-cluster-uat \
-                                    --service techscrum-ecs-service-uat \
-                                    --task-definition techscrum-ecs-task-definition-uat \
-                                    --region ap-southeast-2 \
+                                    --cluster techscrum-ecs-cluster-${params.Environment} \
+                                    --service techscrum-ecs-service-${params.Environment} \
+                                    --task-definition techscrum-ecs-task-definition-${params.Environment} \
+                                    --region ${AWS_REGION} \
                                     --force-new-deployment
                              """
-
-                        // Echo backend url
-                          sh "echo 'Backend healthcheck url:${BACKEND_HEALTHCHECK_URL}'"
-                        }                    
+                        }
                 }
             }
         }
     }
         
-    // post {
-    //     success {
-    //         emailext(
-    //             to: "lawrence.wenboli@gmail.com",
-    //             subject: "Jenkins Pipeline succeeded.",
-    //             body: "Your Jenkins Pipeline succeeded.",
-    //             attachLog: false
-    //         )
-    //     }
+    post {
+        success {
+            echo "Backend Healthcheck url: ${BACKEND_HEALTHCHECK_URL}"
+            emailext(
+                to: "lawrence.wenboli@gmail.com",
+                subject: "Backend cicd pipeline (${params.Environment} environment) succeeded.",
+                body: "Jenkins Pipeline succeeded.\nEnvironment: ${params.Environment}.",
+                attachLog: false
+            )
+        }
 
-    //     failure {
-    //         emailext(
-    //             to: "lawrence.wenboli@gmail.com",
-    //             subject: "Jenkins Pipeline failed.",
-    //             body: "Your Jenkins Pipeline failed，please check logfile for more details.",
-    //             attachLog: true
-    //         )
-    //     }
-    // }
+        failure {
+            emailext(
+                to: "lawrence.wenboli@gmail.com",
+                subject: "Backend cicd pipeline (${params.Environment} environment) failed.",
+                body: "Jenkins Pipeline failed.\nEnvironment: ${params.Environment}.\nPlease check logfile for more details.",
+                attachLog: true
+            )
+        }
+    }
 }
