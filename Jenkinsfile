@@ -55,7 +55,7 @@ pipeline {
                         if (params.Environment == 'prod') {
                             MAIN_DOMAIN = "${HOSTED_ZONE}"
                         }
-                        
+                        sh "echo 'main domain: ${MAIN_DOMAIN}'" 
                         // Build docker image
                         sh '''
                             docker build \
