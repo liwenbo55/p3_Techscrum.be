@@ -60,7 +60,7 @@ pipeline {
                         }
                         sh "echo 'main domain: ${env.MAIN_DOMAIN}'" 
                         // Build docker image
-                        docker.build(${ECR_REGISTRY}:latest, "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} .")
+                        docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} .")
                         // sh '''
                         //     docker build \
                         //             --build-arg ENVIRONMENT=${ENVIRONMENT} \
