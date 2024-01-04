@@ -49,7 +49,7 @@ pipeline {
                         sh 'docker builder prune -f'
                         // Login to AWS ECR
                         // sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
-                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin {ECR_REGISTRY}"
+                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
                         
                         
                         // Build docker image
