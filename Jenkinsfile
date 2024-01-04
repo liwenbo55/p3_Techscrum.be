@@ -13,7 +13,7 @@ pipeline {
         PROJECT_ENV = "${params.Environment}"
         MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
         BACKEND_HEALTHCHECK_URL = "backend.${params.Environment}.${HOSTED_ZONE}/api/v2/healthcheck"
-        ECR_REGISTRY = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}"
+        ECR_REGISTRY_URL = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}"
     }
 
     stages {
@@ -52,7 +52,7 @@ pipeline {
                         
                         // Login to AWS ECR
                         // sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
-                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
+                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
 
                         
                         if (params.Environment == 'prod') {
@@ -130,7 +130,7 @@ pipeline {
                                     --build-arg STRIPE_WEBHOOK_SECRET="123" \
                                     --build-arg LOGGLY_ENDPOINT="" \
                                     --build-arg DEVOPS_MODE="false" \
-                                    -t techscrum-backend-ecr-dev \
+                                    -t techscrum-backend-ecr-dev:latest \
                                     .
                            '''
                         
@@ -138,14 +138,14 @@ pipeline {
 
                         // Push docker image to AWS ECR
                         // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
-                        sh 'docker push ${ECR_REGISTRY}:latest'
+                        sh 'docker push ${ECR_REGISTRY_URL}:latest'
                         
                         // Update ECS service:
                         // Fetch task-definition
                         sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-${PROJECT_ENV} --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
                         
                         // Generate a new task definition
-                        def new_pushed_image = "${ECR_REGISTRY}:latest"
+                        def new_pushed_image = "${ECR_REGISTRY_URL}:latest"
                         sh """
                             jq --arg new_image "${new_pushed_image}" \
                                'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = \$new_image' \
