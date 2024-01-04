@@ -37,6 +37,9 @@ pipeline {
         stage('cd'){
             steps {
                 script {
+
+                    docker.build("latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} .")
+        
                     withCredentials([
                         [$class: 'AmazonWebServicesCredentialsBinding', 
                             credentialsId: 'lawrence-jenkins-credential', 
