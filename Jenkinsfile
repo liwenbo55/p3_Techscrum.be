@@ -13,7 +13,7 @@ pipeline {
         ENVIRONMENT = "${params.Environment}"
         MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
         BACKEND_HEALTHCHECK_URL = "backend.${params.Environment}.${HOSTED_ZONE}/api/v2/healthcheck"
-        ECR_REGISTRY = 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}
+        ECR_REGISTRY = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}"
     }
 
     stages {
