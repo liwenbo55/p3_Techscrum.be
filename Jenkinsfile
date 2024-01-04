@@ -46,8 +46,10 @@ pipeline {
                         string(credentialsId: 'TENANTS_CONNECTION', variable: 'TENANTS_CONNECTION')]) {
                         
                         sh "echo 'Backend (${ENVIRONMENT}) is deploying...'"
+                        
                         // Remove unused build cache
                         sh 'docker builder prune -f'
+                        
                         // Login to AWS ECR
                         // sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
@@ -83,13 +85,7 @@ pipeline {
                                                                   --build-arg NAME='techscrumapp' \
                                                                   .""")
                                      
-                        // "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg NAME="techscrumapp" 
-                        //              --build-arg PORT="8000" --build-arg API_PREFIX="/api"  --build-arg AWS_REGION=${AWS_REGION} 
-                        //              --build-arg AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} --build-arg AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} 
-                        //              --build-arg ACCESS_SECRET="random" --build-arg EMAIL_SECRET="random" --build-arg FORGET_SECRET="random" 
-                        //              --build-arg LIMITER="true" --build-arg PUBLIC_CONNECTION=${PUBLIC_CONNECTION} --build-arg TENANTS_CONNECTION=${TENANTS_CONNECTION} 
-                        //              --build-arg CONNECT_TENANT="" --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} --build-arg STRIPE_PRIVATE_KEY="123" 
-                        //              --build-arg STRIPE_WEBHOOK_SECRET="123" --build-arg LOGGLY_ENDPOINT="" --build-arg DEVOPS_MODE="false" .")
+
                         // sh '''
                             // docker build \
                                     // --build-arg ENVIRONMENT=${ENVIRONMENT} \
@@ -114,6 +110,7 @@ pipeline {
                                     // -t ${ECR_REGISTRY}:latest \
                                     // .
                         //      '''
+                        
                         sh "echo 'main domain: ${MAIN_DOMAIN}'" 
 
                         // Push docker image to AWS ECR
@@ -122,7 +119,7 @@ pipeline {
                         
                         // Update ECS service:
                         // Fetch task-definition
-                        sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-uat --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
+                        sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-${ENVIRONMENT} --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
                         
                         // Generate a new task definition
                         def new_pushed_image = "${ECR_REGISTRY}:latest"
