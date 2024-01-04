@@ -59,7 +59,7 @@ pipeline {
                         // Build docker image
                         sh '''
                             docker build \
-                                    --build-arg ENVIRONMENT="${ENVIRONMENT}" \
+                                    --build-arg ENVIRONMENT="uat" \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg API_PREFIX="/api" \
