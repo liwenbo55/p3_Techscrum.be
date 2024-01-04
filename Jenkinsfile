@@ -107,7 +107,7 @@ pipeline {
                                     --build-arg STRIPE_WEBHOOK_SECRET="123" \
                                     --build-arg LOGGLY_ENDPOINT="" \
                                     --build-arg DEVOPS_MODE="false" \
-                                    -t ${ECR_REGISTRY}:latest \
+                                    -t ${ECR_REGISTRY_URL}:latest \
                                     .
                              '''
                         // sh '''
