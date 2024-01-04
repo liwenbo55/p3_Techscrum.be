@@ -50,12 +50,16 @@ pipeline {
                         // Login to AWS ECR
                         // sh 'aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com'
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
+
                         
+                        if (params.Environment == 'prod') {
+                            MAIN_DOMAIN = "${HOSTED_ZONE}"
+                        }
                         
                         // Build docker image
                         sh '''
                             docker build \
-                                    --build-arg ENVIRONMENT="${Environment}" \
+                                    --build-arg ENVIRONMENT="${ENVIRONMENT}" \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg API_PREFIX="/api" \
@@ -100,9 +104,9 @@ pipeline {
                         // Update ECS service
                           sh """
                              aws ecs update-service \
-                                    --cluster techscrum-ecs-cluster-${Environment} \
-                                    --service techscrum-ecs-service-${Environment} \
-                                    --task-definition techscrum-ecs-task-definition-${Environment} \
+                                    --cluster 'techscrum-ecs-cluster-${ENVIRONMENT}' \
+                                    --service 'techscrum-ecs-service-${ENVIRONMENT}' \
+                                    --task-definition 'techscrum-ecs-task-definition-${ENVIRONMENT}' \
                                     --region ${AWS_REGION} \
                                     --force-new-deployment
                              """
