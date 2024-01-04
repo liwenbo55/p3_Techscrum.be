@@ -62,7 +62,26 @@ pipeline {
                         // Build docker image
                         // docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} .")
                         docker.build("${ECR_REGISTRY}:latest", """--build-arg ENVIRONMENT=${ENVIRONMENT} \
-                                                                     --build-arg NAME='techscrumapp' .""")
+                                                                  --build-arg NAME="techscrumapp" \
+                                                                  --build-arg PORT="8000" \
+                                                                  --build-arg API_PREFIX="/api" \
+                                                                  --build-arg AWS_REGION="${AWS_REGION}" \
+                                                                  --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+                                                                  --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
+                                                                  --build-arg ACCESS_SECRET="random" \
+                                                                  --build-arg EMAIL_SECRET="random" \
+                                                                  --build-arg FORGET_SECRET="random" \
+                                                                  --build-arg LIMITER="true" \
+                                                                  --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
+                                                                  --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
+                                                                  --build-arg CONNECT_TENANT="" \
+                                                                  --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
+                                                                  --build-arg STRIPE_PRIVATE_KEY="123" \
+                                                                  --build-arg STRIPE_WEBHOOK_SECRET="123" \
+                                                                  --build-arg LOGGLY_ENDPOINT="" \
+                                                                  --build-arg DEVOPS_MODE="false" \
+                                                                  --build-arg NAME='techscrumapp' \
+                                                                  .""")
                                      
                         // "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg NAME="techscrumapp" 
                         //              --build-arg PORT="8000" --build-arg API_PREFIX="/api"  --build-arg AWS_REGION=${AWS_REGION} 
@@ -73,27 +92,27 @@ pipeline {
                         //              --build-arg STRIPE_WEBHOOK_SECRET="123" --build-arg LOGGLY_ENDPOINT="" --build-arg DEVOPS_MODE="false" .")
                         // sh '''
                             // docker build \
-                            //         --build-arg ENVIRONMENT=${ENVIRONMENT} \
-                            //         --build-arg NAME="techscrumapp" \
-                            //         --build-arg PORT="8000" \
-                            //         --build-arg API_PREFIX="/api" \
-                            //         --build-arg AWS_REGION="${AWS_REGION}" \
-                            //         --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
-                            //         --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
-                            //         --build-arg ACCESS_SECRET="random" \
-                            //         --build-arg EMAIL_SECRET="random" \
-                            //         --build-arg FORGET_SECRET="random" \
-                            //         --build-arg LIMITER="true" \
-                            //         --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
-                            //         --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
-                            //         --build-arg CONNECT_TENANT="" \
-                            //         --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
-                            //         --build-arg STRIPE_PRIVATE_KEY="123" \
-                            //         --build-arg STRIPE_WEBHOOK_SECRET="123" \
-                            //         --build-arg LOGGLY_ENDPOINT="" \
-                            //         --build-arg DEVOPS_MODE="false" \
-                            //         -t ${ECR_REGISTRY}:latest \
-                            //         .
+                                    // --build-arg ENVIRONMENT=${ENVIRONMENT} \
+                                    // --build-arg NAME="techscrumapp" \
+                                    // --build-arg PORT="8000" \
+                                    // --build-arg API_PREFIX="/api" \
+                                    // --build-arg AWS_REGION="${AWS_REGION}" \
+                                    // --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+                                    // --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
+                                    // --build-arg ACCESS_SECRET="random" \
+                                    // --build-arg EMAIL_SECRET="random" \
+                                    // --build-arg FORGET_SECRET="random" \
+                                    // --build-arg LIMITER="true" \
+                                    // --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
+                                    // --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
+                                    // --build-arg CONNECT_TENANT="" \
+                                    // --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
+                                    // --build-arg STRIPE_PRIVATE_KEY="123" \
+                                    // --build-arg STRIPE_WEBHOOK_SECRET="123" \
+                                    // --build-arg LOGGLY_ENDPOINT="" \
+                                    // --build-arg DEVOPS_MODE="false" \
+                                    // -t ${ECR_REGISTRY}:latest \
+                                    // .
                         //      '''
                         sh "echo 'main domain: ${MAIN_DOMAIN}'" 
 
