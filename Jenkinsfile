@@ -175,8 +175,8 @@ pipeline {
             echo "Backend Healthcheck url: ${BACKEND_HEALTHCHECK_URL}"
             emailext(
                 to: "lawrence.wenboli@gmail.com",
-                subject: "Backend cicd pipeline (${PROJECT_ENV} environment) succeeded.",
-                body: "Jenkins Pipeline succeeded.\nEnvironment: ${PROJECT_ENV}.",
+                subject: "Backend CI/CD pipeline (${PROJECT_ENV} environment) succeeded.",
+                body: "Jenkins CI/CD Pipeline succeeded.\n\nEnvironment: ${PROJECT_ENV}.",
                 attachLog: false
             )
         }
@@ -185,7 +185,7 @@ pipeline {
             emailext(
                 to: "lawrence.wenboli@gmail.com",
                 subject: "Backend cicd pipeline (${PROJECT_ENV} environment) failed.",
-                body: "Jenkins Pipeline failed.\nEnvironment: ${PROJECT_ENV}.\nPlease check logfile for more details.",
+                body: "Jenkins Pipeline failed.\n\nEnvironment: ${PROJECT_ENV}.\n\nPlease check logfile for more details.",
                 attachLog: true
             )
         }
