@@ -10,7 +10,7 @@ pipeline {
     environment {
         AWS_REGION  = "ap-southeast-2"
         HOSTED_ZONE = "wenboli.xyz"
-        ENVIRONMENT = "${params.Environment}"
+        PROJECT_ENV = "${params.Environment}"
         MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
         BACKEND_HEALTHCHECK_URL = "backend.${params.Environment}.${HOSTED_ZONE}/api/v2/healthcheck"
         ECR_REGISTRY = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}"
@@ -45,7 +45,7 @@ pipeline {
                         string(credentialsId: 'PUBLIC_CONNECTION', variable: 'PUBLIC_CONNECTION'), 
                         string(credentialsId: 'TENANTS_CONNECTION', variable: 'TENANTS_CONNECTION')]) {
                         
-                        sh "echo 'Backend (${ENVIRONMENT}) is deploying...'"
+                        sh "echo 'Backend (${PROJECT_ENV}) is deploying...'"
                         
                         // Remove unused build cache
                         sh 'docker builder prune -f'
@@ -63,53 +63,53 @@ pipeline {
                         sh "echo 'main domain: ${env.MAIN_DOMAIN}'" 
                         // Build docker image
                         // docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} .")
-                        docker.build("${ECR_REGISTRY}:latest", """--build-arg ENVIRONMENT=${ENVIRONMENT} \
-                                                                  --build-arg NAME="techscrumapp" \
-                                                                  --build-arg PORT="8000" \
-                                                                  --build-arg API_PREFIX="/api" \
-                                                                  --build-arg AWS_REGION="${AWS_REGION}" \
-                                                                  --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
-                                                                  --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
-                                                                  --build-arg ACCESS_SECRET="random" \
-                                                                  --build-arg EMAIL_SECRET="random" \
-                                                                  --build-arg FORGET_SECRET="random" \
-                                                                  --build-arg LIMITER="true" \
-                                                                  --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
-                                                                  --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
-                                                                  --build-arg CONNECT_TENANT="" \
-                                                                  --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
-                                                                  --build-arg STRIPE_PRIVATE_KEY="123" \
-                                                                  --build-arg STRIPE_WEBHOOK_SECRET="123" \
-                                                                  --build-arg LOGGLY_ENDPOINT="" \
-                                                                  --build-arg DEVOPS_MODE="false" \
-                                                                  --build-arg NAME='techscrumapp' \
-                                                                  .""")
+                        // docker.build("${ECR_REGISTRY}:latest", """--build-arg ENVIRONMENT=${PROJECT_ENV} \
+                        //                                           --build-arg NAME="techscrumapp" \
+                        //                                           --build-arg PORT="8000" \
+                        //                                           --build-arg API_PREFIX="/api" \
+                        //                                           --build-arg AWS_REGION="${AWS_REGION}" \
+                        //                                           --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+                        //                                           --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
+                        //                                           --build-arg ACCESS_SECRET="random" \
+                        //                                           --build-arg EMAIL_SECRET="random" \
+                        //                                           --build-arg FORGET_SECRET="random" \
+                        //                                           --build-arg LIMITER="true" \
+                        //                                           --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
+                        //                                           --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
+                        //                                           --build-arg CONNECT_TENANT="" \
+                        //                                           --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
+                        //                                           --build-arg STRIPE_PRIVATE_KEY="123" \
+                        //                                           --build-arg STRIPE_WEBHOOK_SECRET="123" \
+                        //                                           --build-arg LOGGLY_ENDPOINT="" \
+                        //                                           --build-arg DEVOPS_MODE="false" \
+                        //                                           --build-arg NAME='techscrumapp' \
+                        //                                           .""")
                                      
 
-                        // sh '''
-                            // docker build \
-                                    // --build-arg ENVIRONMENT=${ENVIRONMENT} \
-                                    // --build-arg NAME="techscrumapp" \
-                                    // --build-arg PORT="8000" \
-                                    // --build-arg API_PREFIX="/api" \
-                                    // --build-arg AWS_REGION="${AWS_REGION}" \
-                                    // --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
-                                    // --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
-                                    // --build-arg ACCESS_SECRET="random" \
-                                    // --build-arg EMAIL_SECRET="random" \
-                                    // --build-arg FORGET_SECRET="random" \
-                                    // --build-arg LIMITER="true" \
-                                    // --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
-                                    // --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
-                                    // --build-arg CONNECT_TENANT="" \
-                                    // --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
-                                    // --build-arg STRIPE_PRIVATE_KEY="123" \
-                                    // --build-arg STRIPE_WEBHOOK_SECRET="123" \
-                                    // --build-arg LOGGLY_ENDPOINT="" \
-                                    // --build-arg DEVOPS_MODE="false" \
-                                    // -t ${ECR_REGISTRY}:latest \
-                                    // .
-                        //      '''
+                        sh '''
+                            docker build \
+                                    --build-arg ENVIRONMENT=${PROJECT_ENV} \
+                                    --build-arg NAME="techscrumapp" \
+                                    --build-arg PORT="8000" \
+                                    --build-arg API_PREFIX="/api" \
+                                    --build-arg AWS_REGION="${AWS_REGION}" \
+                                    --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+                                    --build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
+                                    --build-arg ACCESS_SECRET="random" \
+                                    --build-arg EMAIL_SECRET="random" \
+                                    --build-arg FORGET_SECRET="random" \
+                                    --build-arg LIMITER="true" \
+                                    --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
+                                    --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
+                                    --build-arg CONNECT_TENANT="" \
+                                    --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
+                                    --build-arg STRIPE_PRIVATE_KEY="123" \
+                                    --build-arg STRIPE_WEBHOOK_SECRET="123" \
+                                    --build-arg LOGGLY_ENDPOINT="" \
+                                    --build-arg DEVOPS_MODE="false" \
+                                    -t ${ECR_REGISTRY}:latest \
+                                    .
+                             '''
                         
                         sh "echo 'main domain: ${MAIN_DOMAIN}'" 
 
@@ -119,7 +119,7 @@ pipeline {
                         
                         // Update ECS service:
                         // Fetch task-definition
-                        sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-${ENVIRONMENT} --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
+                        sh "aws ecs describe-task-definition --task-definition techscrum-ecs-task-definition-${PROJECT_ENV} --query 'taskDefinition' > task_definition.json --region ap-southeast-2" 
                         
                         // Generate a new task definition
                         def new_pushed_image = "${ECR_REGISTRY}:latest"
@@ -135,10 +135,10 @@ pipeline {
                         // Update ECS service
                           sh """
                              aws ecs update-service \
-                                    --cluster 'techscrum-ecs-cluster-${ENVIRONMENT}' \
-                                    --service 'techscrum-ecs-service-${ENVIRONMENT}' \
-                                    --task-definition 'techscrum-ecs-task-definition-${ENVIRONMENT}' \
-                                    --region ${AWS_REGION} \
+                                    --cluster 'techscrum-ecs-cluster-${PROJECT_ENV}' \
+                                    --service 'techscrum-ecs-service-${PROJECT_ENV}' \
+                                    --task-definition 'techscrum-ecs-task-definition-${PROJECT_ENV}' \
+                                    --region ${PROJECT_ENV} \
                                     --force-new-deployment
                              """
                         }
@@ -152,8 +152,8 @@ pipeline {
             echo "Backend Healthcheck url: ${BACKEND_HEALTHCHECK_URL}"
             emailext(
                 to: "lawrence.wenboli@gmail.com",
-                subject: "Backend cicd pipeline (${Environment} environment) succeeded.",
-                body: "Jenkins Pipeline succeeded.\nEnvironment: ${Environment}.",
+                subject: "Backend cicd pipeline (${PROJECT_ENV} environment) succeeded.",
+                body: "Jenkins Pipeline succeeded.\nEnvironment: ${PROJECT_ENV}.",
                 attachLog: false
             )
         }
@@ -161,8 +161,8 @@ pipeline {
         failure {
             emailext(
                 to: "lawrence.wenboli@gmail.com",
-                subject: "Backend cicd pipeline (${Environment} environment) failed.",
-                body: "Jenkins Pipeline failed.\nEnvironment: ${Environment}.\nPlease check logfile for more details.",
+                subject: "Backend cicd pipeline (${PROJECT_ENV} environment) failed.",
+                body: "Jenkins Pipeline failed.\nEnvironment: ${PROJECT_ENV}.\nPlease check logfile for more details.",
                 attachLog: true
             )
         }
