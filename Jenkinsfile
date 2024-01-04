@@ -55,7 +55,7 @@ pipeline {
                         // Build docker image
                         sh '''
                             docker build \
-                                    --build-arg ENVIRONMENT="${params.Environment}" \
+                                    --build-arg ENVIRONMENT="${Environment}" \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg API_PREFIX="/api" \
@@ -100,9 +100,9 @@ pipeline {
                         // Update ECS service
                           sh """
                              aws ecs update-service \
-                                    --cluster techscrum-ecs-cluster-${params.Environment} \
-                                    --service techscrum-ecs-service-${params.Environment} \
-                                    --task-definition techscrum-ecs-task-definition-${params.Environment} \
+                                    --cluster techscrum-ecs-cluster-${Environment} \
+                                    --service techscrum-ecs-service-${Environment} \
+                                    --task-definition techscrum-ecs-task-definition-${Environment} \
                                     --region ${AWS_REGION} \
                                     --force-new-deployment
                              """
@@ -117,8 +117,8 @@ pipeline {
             echo "Backend Healthcheck url: ${BACKEND_HEALTHCHECK_URL}"
             emailext(
                 to: "lawrence.wenboli@gmail.com",
-                subject: "Backend cicd pipeline (${params.Environment} environment) succeeded.",
-                body: "Jenkins Pipeline succeeded.\nEnvironment: ${params.Environment}.",
+                subject: "Backend cicd pipeline (${Environment} environment) succeeded.",
+                body: "Jenkins Pipeline succeeded.\nEnvironment: ${Environment}.",
                 attachLog: false
             )
         }
@@ -126,8 +126,8 @@ pipeline {
         failure {
             emailext(
                 to: "lawrence.wenboli@gmail.com",
-                subject: "Backend cicd pipeline (${params.Environment} environment) failed.",
-                body: "Jenkins Pipeline failed.\nEnvironment: ${params.Environment}.\nPlease check logfile for more details.",
+                subject: "Backend cicd pipeline (${Environment} environment) failed.",
+                body: "Jenkins Pipeline failed.\nEnvironment: ${Environment}.\nPlease check logfile for more details.",
                 attachLog: true
             )
         }
