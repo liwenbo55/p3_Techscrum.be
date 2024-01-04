@@ -138,7 +138,7 @@ pipeline {
                                     --cluster 'techscrum-ecs-cluster-${PROJECT_ENV}' \
                                     --service 'techscrum-ecs-service-${PROJECT_ENV}' \
                                     --task-definition 'techscrum-ecs-task-definition-${PROJECT_ENV}' \
-                                    --region ${PROJECT_ENV} \
+                                    --region ${AWS_REGION} \
                                     --force-new-deployment
                              """
                         }
