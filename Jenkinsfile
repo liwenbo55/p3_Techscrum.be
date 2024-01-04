@@ -111,7 +111,7 @@ pipeline {
                         //             .
                         //      '''
                         sh '''
-                            docker build --build-arg ENVIRONMENT=dev \
+                            docker build --build-arg ENVIRONMENT=uat \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg API_PREFIX="/api" \
@@ -125,12 +125,12 @@ pipeline {
                                     --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
                                     --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
                                     --build-arg CONNECT_TENANT="" \
-                                    --build-arg MAIN_DOMAIN="dev.techscrumjr11.com" \
+                                    --build-arg MAIN_DOMAIN="uat.techscrumjr11.com" \
                                     --build-arg STRIPE_PRIVATE_KEY="123" \
                                     --build-arg STRIPE_WEBHOOK_SECRET="1234" \
                                     --build-arg LOGGLY_ENDPOINT="" \
                                     --build-arg DEVOPS_MODE="false" \
-                                    -t techscrum-backend-ecr-dev:latest \
+                                    -t techscrum-backend-ecr-uat:latest \
                                     .
                            '''
                         
