@@ -62,7 +62,6 @@ pipeline {
                         // Build docker image
                         sh '''
                             docker build \
-
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg ENVIRONMENT=${ENVIRONMENT} \
