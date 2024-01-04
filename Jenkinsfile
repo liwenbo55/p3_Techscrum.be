@@ -66,7 +66,7 @@ pipeline {
                              '''
 
                         // Push docker image to AWS ECR
-                        // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
+                        sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
                         
                         // Update ECS service:
                         // Fetch task-definition
