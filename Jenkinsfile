@@ -127,7 +127,7 @@ pipeline {
                                     --build-arg CONNECT_TENANT="" \
                                     --build-arg MAIN_DOMAIN="dev.techscrumjr11.com" \
                                     --build-arg STRIPE_PRIVATE_KEY="123" \
-                                    --build-arg STRIPE_WEBHOOK_SECRET="123" \
+                                    --build-arg STRIPE_WEBHOOK_SECRET="1234" \
                                     --build-arg LOGGLY_ENDPOINT="" \
                                     --build-arg DEVOPS_MODE="false" \
                                     -t techscrum-backend-ecr-dev:latest \
