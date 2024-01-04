@@ -58,11 +58,11 @@ pipeline {
                         } else {
                             MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
                         }
-                        sh "echo 'main domain: ${MAIN_DOMAIN}'" 
+                        sh "echo 'main domain: ${env.MAIN_DOMAIN}'" 
                         // Build docker image
                         sh '''
                             docker build \
-                                    --build-arg ENVIRONMENT=${ENVIRONMENT}
+                                    --build-arg ENVIRONMENT=${env.ENVIRONMENT} \
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
                                     --build-arg API_PREFIX="/api" \
@@ -76,7 +76,7 @@ pipeline {
                                     --build-arg PUBLIC_CONNECTION="${PUBLIC_CONNECTION}" \
                                     --build-arg TENANTS_CONNECTION="${TENANTS_CONNECTION}" \
                                     --build-arg CONNECT_TENANT="" \
-                                    --build-arg MAIN_DOMAIN="${MAIN_DOMAIN}" \
+                                    --build-arg MAIN_DOMAIN="${env.MAIN_DOMAIN}" \
                                     --build-arg STRIPE_PRIVATE_KEY="123" \
                                     --build-arg STRIPE_WEBHOOK_SECRET="123" \
                                     --build-arg LOGGLY_ENDPOINT="" \
