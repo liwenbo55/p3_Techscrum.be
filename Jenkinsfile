@@ -61,7 +61,7 @@ pipeline {
                         sh "echo 'main domain: ${env.MAIN_DOMAIN}'" 
                         // Build docker image
                         // docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg MAIN_DOMAIN=${MAIN_DOMAIN} .")
-                        docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg NAME='techscrumapp' ."
+                        docker.build("${ECR_REGISTRY}:latest", "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg NAME='techscrumapp' .")
                                      
                         // "--build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg NAME="techscrumapp" 
                         //              --build-arg PORT="8000" --build-arg API_PREFIX="/api"  --build-arg AWS_REGION=${AWS_REGION} 
@@ -94,7 +94,7 @@ pipeline {
                             //         -t ${ECR_REGISTRY}:latest \
                             //         .
                         //      '''
-                            sh "echo 'main domain: ${MAIN_DOMAIN}'" 
+                        sh "echo 'main domain: ${MAIN_DOMAIN}'" 
 
                         // Push docker image to AWS ECR
                         // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
