@@ -45,6 +45,7 @@ pipeline {
                         string(credentialsId: 'PUBLIC_CONNECTION', variable: 'PUBLIC_CONNECTION'), 
                         string(credentialsId: 'TENANTS_CONNECTION', variable: 'TENANTS_CONNECTION')]) {
                         
+                        sh "echo 'Backend (${ENVIRONMENT}) is deploying...'"
                         // Remove unused build cache
                         sh 'docker builder prune -f'
                         // Login to AWS ECR
