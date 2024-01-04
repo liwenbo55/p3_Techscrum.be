@@ -62,9 +62,10 @@ pipeline {
                         // Build docker image
                         sh '''
                             docker build \
-                                    --build-arg ENVIRONMENT=${ENVIRONMENT} \
+
                                     --build-arg NAME="techscrumapp" \
                                     --build-arg PORT="8000" \
+                                    --build-arg ENVIRONMENT=${ENVIRONMENT} \
                                     --build-arg API_PREFIX="/api" \
                                     --build-arg AWS_REGION="${AWS_REGION}" \
                                     --build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
