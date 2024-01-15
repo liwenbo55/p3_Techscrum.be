@@ -50,15 +50,17 @@ pipeline {
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
 
                         
-                        if (params.Environment == 'prod') {
-                            MAIN_DOMAIN = "${HOSTED_ZONE}"
-                        } else {
-                            MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
-                        }
-                        sh "echo 'main domain: ${env.MAIN_DOMAIN}'" 
+                        // if (params.Environment == 'prod') {
+                        //     MAIN_DOMAIN = "${HOSTED_ZONE}"
+                        // } else {
+                        //     MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
+                        // }
+                        // sh "echo 'main domain: ${env.MAIN_DOMAIN}'" 
                         
                         // Build docker image                                  
                         sh "docker build -t ${ECR_REGISTRY_URL}:latest ."
+                        
+                        sh "echo 'main domain: ${HOSTED_ZONE}'" 
 
                         sh "echo 'main domain: ${MAIN_DOMAIN}'" 
 
