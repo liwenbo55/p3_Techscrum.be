@@ -12,7 +12,7 @@ pipeline {
         HOSTED_ZONE = credentials('HOSTED_ZONE_NAME')
         ECR_REGISTRY_URL = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}"
         PROJECT_ENV = "${params.Environment}"
-        MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
+        // MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
         BACKEND_HEALTHCHECK_URL = "backend.${params.Environment}.${HOSTED_ZONE}/api/v2/healthcheck"
         
     }
