@@ -9,7 +9,7 @@ pipeline {
 
     environment {
         AWS_REGION  = "ap-southeast-2"
-        HOSTED_ZONE = credentials('HOSTED_ZONE_NAME')
+        HOSTED_ZONE = "wenboli.xyz"
         ECR_REGISTRY_URL = "364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-${params.Environment}"
         PROJECT_ENV = "${params.Environment}"
         // MAIN_DOMAIN = "${params.Environment}.${HOSTED_ZONE}"
