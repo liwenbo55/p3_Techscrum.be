@@ -62,7 +62,7 @@ pipeline {
                         
                         sh "echo 'main domain: ${HOSTED_ZONE}'" 
 
-                        sh "echo 'main domain: ${MAIN_DOMAIN}'" 
+                        // sh "echo 'main domain: ${MAIN_DOMAIN}'" 
 
                         // Push docker image to AWS ECR
                         // sh 'docker push 364250634199.dkr.ecr.ap-southeast-2.amazonaws.com/techscrum-backend-ecr-uat:latest'
